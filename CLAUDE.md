@@ -183,8 +183,14 @@ as they land.
   - `fix: guard against missing repository fields`
   - `fix: handle 404 and network errors in detail view`
 
-- [ ] **Stage 9 — Component tests.** State rendering (empty/loading/error), repo
-  card with null fields.
+- [x] **Stage 9 — Component tests.** `@vue/test-utils` mounted against the app's
+  Vuetify instance + active Pinia + router (shared `mountWithApp` helper; setup
+  adds `matchMedia`/`ResizeObserver` stubs; `makeRepo` fixture factory). Covers
+  `StateMessage` (title/text/slot), `RepoListItem` (compact stats, detail link,
+  null description/language, topics present/absent, archived chip), `ErrorState`
+  (rate-limit add-token prompt, opens dialog, reset time when token present,
+  generic message, retry emit), and `RateLimitIndicator` (hidden/shown/error
+  color). 17 new tests — 60 total.
   - `test: cover component states and edge cases`
 
 - [ ] **Stage 10 — Deploy & docs.** GitHub Actions → Pages, `base` path, concise
