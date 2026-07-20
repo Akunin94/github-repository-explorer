@@ -104,8 +104,11 @@ as they land.
   app runs via `npm run dev`.
   - `chore: scaffold Vite + Vue 3 + TypeScript project`
 
-- [ ] **Stage 1 — Config & tooling.** Tighten tsconfig, add `@/` path alias, add
-  SCSS, Pinia, Vue Router (hash), and Vitest. A placeholder route renders.
+- [x] **Stage 1 — Config & tooling.** Tightened tsconfig
+  (`noUncheckedIndexedAccess`, `noImplicitReturns`), added `@/` path alias, SCSS,
+  Pinia, Vue Router (hash), and Vitest 3 (aligned with Vite 6 to avoid a
+  duplicate-vite type clash). Placeholder `SearchView` route renders; a router
+  smoke test passes.
   - `build: tighten TypeScript config and add @/ path alias`
   - `chore: add Pinia, Vue Router (hash) and Vitest`
 

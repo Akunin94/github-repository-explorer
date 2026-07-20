@@ -3,10 +3,9 @@
 </script>
 
 <template>
-  <main class="app">
-    <h1>GitHub Repository Explorer</h1>
-    <p>Project scaffold — built up in stages.</p>
-  </main>
+  <div class="app">
+    <router-view />
+  </div>
 </template>
 
 <style scoped>
