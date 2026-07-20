@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
@@ -33,7 +33,12 @@ jobs:
       - run: npm run test
       - run: npm run build
 
+      # `enablement: true` turns Pages on via the API if it isn't already, so a
+      # fresh repo doesn't fail with "Get Pages site failed: Not Found". You can
+      # instead enable it once under Settings -> Pages -> Source: GitHub Actions.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:

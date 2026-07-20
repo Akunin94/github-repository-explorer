@@ -195,10 +195,14 @@ as they land.
 
 - [x] **Stage 10 — Deploy & docs.** GitHub Actions workflow deploys to Pages on
   push to `main` (tests + build gate the deploy, least-privilege token,
-  concurrency guard). Vite `base` set to `/github-repository-explorer/` so assets
-  resolve under the project page. Concise README (context, setup, token-optional
-  auth choice, handled edge cases, AI disclosure).
+  concurrency guard). `configure-pages` uses `enablement: true` so a fresh repo
+  doesn't fail with "Get Pages site failed: Not Found"; Node bumped to 22. Vite
+  `base` is relative (`./`) so built assets resolve under any project-page
+  subpath without hardcoding the repo name (verified: index.html emits
+  `./assets/…`). Concise README (context, setup, token-optional auth choice,
+  handled edge cases, first-run Pages enablement, AI disclosure).
   - `ci: deploy to GitHub Pages`
+  - `fix: enable Pages via workflow and use relative asset base`
 
 ## Environment note
 

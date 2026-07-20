@@ -6,9 +6,10 @@ import vuetify from 'vite-plugin-vuetify'
 // https://vite.dev/config/ — defineConfig is imported from vitest/config so the
 // `test` block is type-checked alongside the Vite config.
 export default defineConfig({
-  // Served from a project page (https://<user>.github.io/<repo>/), so assets
-  // must be requested under the repo path rather than the domain root.
-  base: '/github-repository-explorer/',
+  // Relative base so built asset URLs work under any project-page subpath
+  // (https://<user>.github.io/<repo>/) without hardcoding the repo name. Hash
+  // routing keeps every deep link on index.html, so relative paths resolve.
+  base: './',
   plugins: [
     vue(),
     // Auto-imports Vuetify components/directives and tree-shakes unused styles.
