@@ -193,10 +193,12 @@ as they land.
   color). 17 new tests — 60 total.
   - `test: cover component states and edge cases`
 
-- [ ] **Stage 10 — Deploy & docs.** GitHub Actions → Pages, `base` path, concise
-  README (context, setup, auth choice, handled edge cases, AI disclosure).
+- [x] **Stage 10 — Deploy & docs.** GitHub Actions workflow deploys to Pages on
+  push to `main` (tests + build gate the deploy, least-privilege token,
+  concurrency guard). Vite `base` set to `/github-repository-explorer/` so assets
+  resolve under the project page. Concise README (context, setup, token-optional
+  auth choice, handled edge cases, AI disclosure).
   - `ci: deploy to GitHub Pages`
-  - `docs: add README`
 
 ## Environment note
 
