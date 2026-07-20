@@ -122,9 +122,11 @@ as they land.
   imported icons ship, instead of the full ~1.3 MB MDI webfont.
   - `feat: set up Vuetify and app shell`
 
-- [ ] **Stage 3 — API layer & types.** GitHub types, fetch wrapper, rate-limit
-  header parsing, normalized error model, `AbortController`. Unit tests for the
-  pure helpers.
+- [x] **Stage 3 — API layer & types.** GitHub types; `request` fetch wrapper
+  with rate-limit header parsing, normalized `ApiError`/`AbortedError` model, and
+  abort handling; `searchRepositories` / `getRepository` services. 22 unit tests
+  cover rate-limit parsing, url building, error mapping (404/403/422/401/network/
+  abort), auth header, and query encoding.
   - `feat: add GitHub API types`
   - `feat: add API client with rate-limit and error handling`
   - `test: cover rate-limit parsing and url building`
