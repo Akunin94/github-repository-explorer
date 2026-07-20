@@ -12,7 +12,7 @@ defineProps<{ repo: GitHubRepo }>()
       <div class="d-flex align-center ga-2 flex-wrap">
         <router-link
           :to="{ name: 'repo', params: { owner: repo.owner.login, name: repo.name } }"
-          class="text-secondary text-subtitle-1 font-weight-bold text-decoration-none"
+          class="repo-name text-secondary text-subtitle-1 font-weight-bold text-decoration-none"
         >
           {{ repo.full_name }}
         </router-link>
@@ -21,7 +21,7 @@ defineProps<{ repo: GitHubRepo }>()
         </v-chip>
       </div>
 
-      <p v-if="repo.description" class="text-body-2 text-medium-emphasis mb-0">
+      <p v-if="repo.description" class="repo-description text-body-2 text-medium-emphasis mb-0">
         {{ repo.description }}
       </p>
 
@@ -59,3 +59,21 @@ defineProps<{ repo: GitHubRepo }>()
     </div>
   </v-card>
 </template>
+
+<style scoped lang="scss">
+// Long repo slugs (e.g. deeply-nested-org/very-long-name) shouldn't force
+// horizontal scroll on narrow screens.
+.repo-name {
+  overflow-wrap: anywhere;
+}
+
+// Clamp long descriptions to two lines so cards stay a predictable height.
+.repo-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+</style>

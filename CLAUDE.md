@@ -170,9 +170,15 @@ as they land.
   remaining/limit, turns amber under 15% and red at 0, with a reset-time tooltip.
   - `feat: add optional token dialog and rate-limit indicator`
 
-- [ ] **Stage 8 — Edge-case hardening.** A deliberate, visible pass: rate-limit
-  screen with reset time, 404 handling, null-field guards, long-string
-  truncation, 1,000-result cap, offline/retry.
+- [x] **Stage 8 — Edge-case hardening.** Actionable rate-limit screen with reset
+  time + "Add token" prompt (shared `ErrorState`, `ui` store); 404 "not found"
+  state; nullable fields (description, language, license, topics, homepage) all
+  guarded; long repo slugs/descriptions wrap (`overflow-wrap: anywhere`) with
+  2-line description clamp so cards keep a stable height; `StateMessage` capped
+  width so an echoed query can't overflow; 1,000-result cap surfaced in search
+  meta; offline/network errors fall through to the retryable generic state.
+  Catch-all now redirects to the path (not the named route), silencing the
+  vue-router `pathMatch` warning.
   - `fix: handle rate-limit exhaustion with reset time`
   - `fix: guard against missing repository fields`
   - `fix: handle 404 and network errors in detail view`

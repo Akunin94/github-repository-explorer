@@ -81,7 +81,7 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
 
         <div class="flex-grow-1" style="min-width: 240px">
           <div class="d-flex align-center ga-2 flex-wrap">
-            <h1 class="text-h5 font-weight-bold">
+            <h1 class="wrap-anywhere text-h5 font-weight-bold">
               <a
                 :href="repo.owner.html_url"
                 target="_blank"
@@ -97,7 +97,7 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
             </v-chip>
           </div>
 
-          <p v-if="repo.description" class="text-body-1 text-medium-emphasis mt-2 mb-0">
+          <p v-if="repo.description" class="wrap-anywhere text-body-1 text-medium-emphasis mt-2 mb-0">
             {{ repo.description }}
           </p>
 
@@ -178,3 +178,10 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
     </template>
   </section>
 </template>
+
+<style scoped lang="scss">
+// Guard against long names/descriptions forcing horizontal scroll on mobile.
+.wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+</style>

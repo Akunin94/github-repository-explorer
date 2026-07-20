@@ -15,7 +15,9 @@ const routes: RouteRecordRaw[] = [
     props: true,
   },
   // Unknown paths fall back to the search screen rather than a blank page.
-  { path: '/:pathMatch(.*)*', redirect: { name: 'search' } },
+  // Redirect to the path (not the named route) so the captured `pathMatch`
+  // param isn't carried into a route that doesn't declare it (which warns).
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
 // Hash history is intentional: GitHub Pages is a static host with no server-side
