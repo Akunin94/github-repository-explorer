@@ -131,9 +131,14 @@ as they land.
   - `feat: add API client with rate-limit and error handling`
   - `test: cover rate-limit parsing and url building`
 
-- [ ] **Stage 4 — State & composables.** Pinia settings store (token +
-  rate-limit snapshot), `useRepoSearch` (debounce, cancellation, pagination),
-  `useRepoDetails`. Unit tests for the search composable.
+- [x] **Stage 4 — State & composables.** Pinia `settings` store (PAT persisted
+  to localStorage with safe fallback, rate-limit snapshot, `hasToken` /
+  `isRateLimited` getters); `useRepoSearch` (debounced typing, immediate sort/
+  page, `AbortController` cancellation of superseded requests, page reset on new
+  query, `totalPages` capped at the 1000-result window, error/loading state,
+  rate-limit propagation to the store); `useRepoDetails` (single-repo load with
+  cancellation). 14 new unit tests (settings store 7, search composable 7) —
+  36 total.
   - `feat: add settings store for token and rate limit`
   - `feat: add repo search composable with debounce and cancellation`
   - `test: cover search composable`
