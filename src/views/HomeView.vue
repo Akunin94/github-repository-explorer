@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import {
-  mdiAlertCircleOutline,
-  mdiMagnify,
-  mdiSourceRepositoryMultiple,
-} from '@mdi/js'
+import { mdiMagnify, mdiSourceRepositoryMultiple } from '@mdi/js'
 import { useRepoSearch } from '@/composables/useRepoSearch'
 import RepoListItem from '@/components/RepoListItem.vue'
 import StateMessage from '@/components/StateMessage.vue'
+import ErrorState from '@/components/ErrorState.vue'
 import { MAX_SEARCH_RESULTS } from '@/api/github'
 import { formatNumber } from '@/utils/format'
 import type { SortOption } from '@/types/github'
@@ -87,14 +84,7 @@ const capped = computed(() => totalCount.value > MAX_SEARCH_RESULTS)
       </template>
 
       <!-- Error -->
-      <StateMessage
-        v-else-if="error"
-        :icon="mdiAlertCircleOutline"
-        :title="error.kind === 'rate-limit' ? 'Rate limit reached' : 'Something went wrong'"
-        :text="error.message"
-      >
-        <v-btn color="secondary" variant="flat" @click="retry">Try again</v-btn>
-      </StateMessage>
+      <ErrorState v-else-if="error" :error="error" @retry="retry" />
 
       <!-- Idle -->
       <StateMessage

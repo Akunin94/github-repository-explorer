@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { mdiGithub } from '@mdi/js'
-// App shell: a Vuetify layout with a top bar and the routed view. Header actions
-// (token dialog, rate-limit indicator) are added in Stage 7.
+import { mdiGithub, mdiKeyVariant, mdiKeyOutline } from '@mdi/js'
+import { useSettingsStore } from '@/stores/settings'
+import { useUiStore } from '@/stores/ui'
+import RateLimitIndicator from '@/components/RateLimitIndicator.vue'
+import TokenDialog from '@/components/TokenDialog.vue'
+
+// App shell: a Vuetify layout with a top bar and the routed view. The header
+// carries the rate-limit indicator and the optional token dialog. The dialog's
+// open state lives in the ui store so error screens can open it too.
+const settings = useSettingsStore()
+const ui = useUiStore()
 </script>
 
 <template>
   <v-app>
     <v-app-bar flat border density="comfortable">
-      <v-container class="d-flex align-center py-0">
+      <v-container class="d-flex align-center ga-2 py-0">
         <router-link
           to="/"
           class="d-flex align-center ga-2 text-decoration-none text-high-emphasis"
@@ -15,8 +23,24 @@ import { mdiGithub } from '@mdi/js'
           <v-icon :icon="mdiGithub" />
           <span class="text-subtitle-1 font-weight-bold">Repo Explorer</span>
         </router-link>
+
+        <v-spacer />
+
+        <RateLimitIndicator />
+
+        <v-btn
+          :prepend-icon="settings.hasToken ? mdiKeyVariant : mdiKeyOutline"
+          :color="settings.hasToken ? 'success' : undefined"
+          variant="text"
+          class="text-none"
+          @click="ui.openTokenDialog()"
+        >
+          {{ settings.hasToken ? 'Token added' : 'Add token' }}
+        </v-btn>
       </v-container>
     </v-app-bar>
+
+    <TokenDialog v-model="ui.tokenDialogOpen" />
 
     <v-main>
       <v-container class="page">

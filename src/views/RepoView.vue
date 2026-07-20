@@ -14,6 +14,7 @@ import {
 } from '@mdi/js'
 import { useRepoDetails } from '@/composables/useRepoDetails'
 import StateMessage from '@/components/StateMessage.vue'
+import ErrorState from '@/components/ErrorState.vue'
 import { formatNumber, formatRelativeDate, languageColor } from '@/utils/format'
 
 defineOptions({ name: 'RepoView' })
@@ -68,17 +69,8 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
       <v-btn color="secondary" variant="flat" to="/">Back to search</v-btn>
     </StateMessage>
 
-    <!-- Other errors -->
-    <StateMessage
-      v-else-if="error"
-      :icon="mdiAlertCircleOutline"
-      :title="error.kind === 'rate-limit' ? 'Rate limit reached' : 'Something went wrong'"
-      :text="error.message"
-    >
-      <v-btn color="secondary" variant="flat" @click="load(props.owner, props.name)">
-        Try again
-      </v-btn>
-    </StateMessage>
+    <!-- Other errors (rate limit, network, …) -->
+    <ErrorState v-else-if="error" :error="error" @retry="load(props.owner, props.name)" />
 
     <!-- Loaded -->
     <template v-else-if="repo">

@@ -163,8 +163,11 @@ as they land.
   states. External links use `target="_blank" rel="noopener noreferrer"`.
   - `feat: build repository detail page`
 
-- [ ] **Stage 7 — Auth UX.** Token dialog, browser-only storage, rate-limit
-  indicator in the header.
+- [x] **Stage 7 — Auth UX.** `TokenDialog` (masked field with show/hide,
+  explains the 60->5,000/hr bump, notes browser-only localStorage storage +
+  direct-to-GitHub, links to token creation, Save/Remove) driven from the header
+  "Add token" / "Token added" button. `RateLimitIndicator` header chip shows
+  remaining/limit, turns amber under 15% and red at 0, with a reset-time tooltip.
   - `feat: add optional token dialog and rate-limit indicator`
 
 - [ ] **Stage 8 — Edge-case hardening.** A deliberate, visible pass: rate-limit
