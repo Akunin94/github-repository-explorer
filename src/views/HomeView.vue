@@ -1,11 +1,139 @@
 <script setup lang="ts">
-// Placeholder for the search screen. Real search UI arrives in Stage 5.
+import { computed } from 'vue'
+import {
+  mdiAlertCircleOutline,
+  mdiMagnify,
+  mdiSourceRepositoryMultiple,
+} from '@mdi/js'
+import { useRepoSearch } from '@/composables/useRepoSearch'
+import RepoListItem from '@/components/RepoListItem.vue'
+import StateMessage from '@/components/StateMessage.vue'
+import { MAX_SEARCH_RESULTS } from '@/api/github'
+import { formatNumber } from '@/utils/format'
+import type { SortOption } from '@/types/github'
+
 defineOptions({ name: 'SearchView' })
+
+const { query, sort, page, items, totalCount, totalPages, loading, error, isEmpty, retry } =
+  useRepoSearch()
+
+const sortOptions: { title: string; value: SortOption }[] = [
+  { title: 'Best match', value: 'best-match' },
+  { title: 'Most stars', value: 'stars' },
+  { title: 'Most forks', value: 'forks' },
+  { title: 'Recently updated', value: 'updated' },
+]
+
+// `clearable` emits null when cleared; coerce back to an empty string so the
+// composable only ever sees a string.
+const queryModel = computed<string>({
+  get: () => query.value,
+  set: (value) => {
+    query.value = value ?? ''
+  },
+})
+
+const idle = computed(() => query.value.trim() === '')
+const capped = computed(() => totalCount.value > MAX_SEARCH_RESULTS)
 </script>
 
 <template>
   <section>
     <h1 class="text-h5 font-weight-bold mb-1">Search GitHub repositories</h1>
-    <p class="text-body-2 text-medium-emphasis">Search UI coming in a later stage.</p>
+    <p class="text-body-2 text-medium-emphasis mb-5">
+      Find repositories by name, topic, or keyword.
+    </p>
+
+    <div class="d-flex ga-3 flex-column flex-sm-row">
+      <v-text-field
+        v-model="queryModel"
+        :prepend-inner-icon="mdiMagnify"
+        placeholder="e.g. vue router, tensorflow, machine learning"
+        label="Search"
+        clearable
+        hide-details
+        autofocus
+        class="flex-grow-1"
+      />
+      <v-select
+        v-model="sort"
+        :items="sortOptions"
+        label="Sort by"
+        hide-details
+        variant="outlined"
+        density="comfortable"
+        class="sort-select"
+      />
+    </div>
+
+    <!-- Result meta -->
+    <div
+      v-if="!idle && !loading && !error && items.length"
+      class="text-body-2 text-medium-emphasis mt-4"
+    >
+      {{ formatNumber(totalCount) }} repositories found
+      <span v-if="capped">— showing the first {{ formatNumber(MAX_SEARCH_RESULTS) }}</span>
+    </div>
+
+    <div class="mt-4">
+      <!-- Loading -->
+      <template v-if="loading">
+        <v-skeleton-loader
+          v-for="n in 5"
+          :key="n"
+          type="article"
+          class="mb-3 rounded-lg border"
+        />
+      </template>
+
+      <!-- Error -->
+      <StateMessage
+        v-else-if="error"
+        :icon="mdiAlertCircleOutline"
+        :title="error.kind === 'rate-limit' ? 'Rate limit reached' : 'Something went wrong'"
+        :text="error.message"
+      >
+        <v-btn color="secondary" variant="flat" @click="retry">Try again</v-btn>
+      </StateMessage>
+
+      <!-- Idle -->
+      <StateMessage
+        v-else-if="idle"
+        :icon="mdiSourceRepositoryMultiple"
+        title="Start typing to search"
+        text="Results appear as you type."
+      />
+
+      <!-- Empty -->
+      <StateMessage
+        v-else-if="isEmpty"
+        :icon="mdiMagnify"
+        title="No repositories found"
+        :text="`Nothing matched “${query.trim()}”. Try different keywords.`"
+      />
+
+      <!-- Results -->
+      <template v-else>
+        <div class="d-flex flex-column ga-3">
+          <RepoListItem v-for="repo in items" :key="repo.id" :repo="repo" />
+        </div>
+
+        <div v-if="totalPages > 1" class="d-flex justify-center mt-6">
+          <v-pagination
+            v-model="page"
+            :length="totalPages"
+            :total-visible="5"
+            density="comfortable"
+            rounded="lg"
+          />
+        </div>
+      </template>
+    </div>
   </section>
 </template>
+
+<style scoped lang="scss">
+.sort-select {
+  min-width: 180px;
+}
+</style>

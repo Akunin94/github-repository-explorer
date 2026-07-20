@@ -7,6 +7,13 @@ const routes: RouteRecordRaw[] = [
     name: 'search',
     component: () => import('@/views/HomeView.vue'),
   },
+  {
+    // owner/name are captured as params and passed to the detail view as props.
+    path: '/repo/:owner/:name',
+    name: 'repo',
+    component: () => import('@/views/RepoView.vue'),
+    props: true,
+  },
   // Unknown paths fall back to the search screen rather than a blank page.
   { path: '/:pathMatch(.*)*', redirect: { name: 'search' } },
 ]

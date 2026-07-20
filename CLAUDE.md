@@ -143,8 +143,15 @@ as they land.
   - `feat: add repo search composable with debounce and cancellation`
   - `test: cover search composable`
 
-- [ ] **Stage 5 — Search page.** Input, result list, sort, pagination,
-  loading/idle/empty states.
+- [x] **Stage 5 — Search page.** `SearchView` wired to `useRepoSearch`: query
+  field (debounced, clearable), sort select, result meta with 1000-result cap
+  note, and `v-pagination`. Distinct idle / loading (skeletons) / empty / error
+  (with retry) / results states via a reusable `StateMessage`. `RepoListItem`
+  card (name link to the detail route, description, topics, language dot,
+  stars/forks, relative updated date, archived chip). Added `format` utils
+  (compact/grouped numbers, relative date, linguist colors) with 7 tests, plus
+  the `/repo/:owner/:name` route with a placeholder `RepoView` so result links
+  resolve. 43 tests total.
   - `feat: build repository search page`
 
 - [ ] **Stage 6 — Detail page.** Route `/repo/:owner/:name`; stats, language,
