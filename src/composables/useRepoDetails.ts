@@ -27,7 +27,7 @@ export function useRepoDetails() {
     repo.value = null
 
     try {
-      const { data, rateLimit } = await getRepository({
+      const { data } = await getRepository({
         owner,
         repo: name,
         token: settings.token || null,
@@ -35,13 +35,11 @@ export function useRepoDetails() {
       })
       if (local !== controller) return
       repo.value = data
-      settings.setRateLimit(rateLimit)
     } catch (err) {
       if (err instanceof AbortedError) return
       if (local !== controller) return
       if (err instanceof ApiError) {
         error.value = err
-        settings.setRateLimit(err.rateLimit)
       } else {
         throw err
       }

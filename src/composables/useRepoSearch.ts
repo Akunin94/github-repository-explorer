@@ -85,7 +85,7 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
     error.value = null
 
     try {
-      const { data, rateLimit } = await searchRepositories({
+      const { data } = await searchRepositories({
         query: trimmedQuery.value,
         sort: sort.value,
         page: page.value,
@@ -95,13 +95,11 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
       if (local !== controller) return // superseded while awaiting
       items.value = data.items
       totalCount.value = data.total_count
-      settings.setRateLimit(rateLimit)
     } catch (err) {
       if (err instanceof AbortedError) return
       if (local !== controller) return
       if (err instanceof ApiError) {
         error.value = err
-        settings.setRateLimit(err.rateLimit)
         clearResults()
       } else {
         throw err

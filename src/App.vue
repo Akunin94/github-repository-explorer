@@ -2,7 +2,6 @@
 import { mdiGithub, mdiKeyVariant, mdiKeyOutline } from '@mdi/js'
 import { useSettingsStore } from '@/stores/settings'
 import { useUiStore } from '@/stores/ui'
-import RateLimitIndicator from '@/components/RateLimitIndicator.vue'
 import TokenDialog from '@/components/TokenDialog.vue'
 
 // App shell: a Vuetify layout with a top bar and the routed view. The header
@@ -25,8 +24,6 @@ const ui = useUiStore()
         </router-link>
 
         <v-spacer />
-
-        <RateLimitIndicator />
 
         <v-btn
           :prepend-icon="settings.hasToken ? mdiKeyVariant : mdiKeyOutline"

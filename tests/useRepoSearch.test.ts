@@ -3,7 +3,6 @@ import { effectScope, nextTick, type EffectScope } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { ApiError, type RateLimitInfo } from '@/api/errors'
 import type { SearchReposResponse } from '@/types/github'
-import { useSettingsStore } from '@/stores/settings'
 
 // Mock the API surface so the composable is tested in isolation from fetch.
 vi.mock('@/api/github', async () => {
@@ -185,20 +184,5 @@ describe('useRepoSearch', () => {
     expect(s.loading.value).toBe(false)
     // An error is a distinct state from "searched but empty".
     expect(s.isEmpty.value).toBe(false)
-  })
-
-  it('propagates rate-limit snapshots to the settings store', async () => {
-    const calls = deferredMock()
-    const s = mountSearch()
-    const settings = useSettingsStore()
-    s.query.value = 'vue'
-    await nextTick()
-    await vi.advanceTimersByTimeAsync(DEBOUNCE)
-    calls[0]!.resolve({
-      data: { total_count: 1, incomplete_results: false, items: [] },
-      rateLimit: { limit: 30, remaining: 12, reset: 999 },
-    })
-    await vi.advanceTimersByTimeAsync(0)
-    expect(settings.rateLimit).toEqual({ limit: 30, remaining: 12, reset: 999 })
   })
 })

@@ -26,7 +26,9 @@ describe('ErrorState', () => {
   it('prompts to add a token when rate-limited without one', () => {
     const wrapper = mountWithApp(ErrorState, { props: { error: rateLimitError() } })
     expect(wrapper.text()).toContain('Rate limit reached')
-    expect(wrapper.text()).toContain('5,000/hour')
+    // Endpoint-agnostic wording — no hardcoded per-hour/per-minute number.
+    expect(wrapper.text()).toContain('unauthenticated requests')
+    expect(wrapper.text()).not.toMatch(/\d+\s*\/\s*hour/i)
     expect(findButton(wrapper, 'Add token')).toBeDefined()
   })
 

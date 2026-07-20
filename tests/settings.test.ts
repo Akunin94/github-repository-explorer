@@ -16,7 +16,6 @@ describe('settings store', () => {
     const store = useSettingsStore()
     expect(store.token).toBe('')
     expect(store.hasToken).toBe(false)
-    expect(store.rateLimit).toBeNull()
   })
 
   it('hydrates the token from localStorage', () => {
@@ -40,22 +39,6 @@ describe('settings store', () => {
     expect(store.token).toBe('')
     expect(store.hasToken).toBe(false)
     expect(localStorage.getItem('gh-explorer:token')).toBeNull()
-  })
-
-  it('stores rate-limit snapshots but ignores null', () => {
-    const store = useSettingsStore()
-    store.setRateLimit({ limit: 60, remaining: 10, reset: 123 })
-    expect(store.rateLimit).toEqual({ limit: 60, remaining: 10, reset: 123 })
-    store.setRateLimit(null)
-    expect(store.rateLimit).toEqual({ limit: 60, remaining: 10, reset: 123 })
-  })
-
-  it('flags exhaustion via isRateLimited', () => {
-    const store = useSettingsStore()
-    store.setRateLimit({ limit: 60, remaining: 5, reset: 123 })
-    expect(store.isRateLimited).toBe(false)
-    store.setRateLimit({ limit: 60, remaining: 0, reset: 123 })
-    expect(store.isRateLimited).toBe(true)
   })
 
   it('survives localStorage throwing', () => {

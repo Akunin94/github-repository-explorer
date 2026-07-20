@@ -25,14 +25,18 @@ const title = computed(() =>
   isRateLimit.value ? 'Rate limit reached' : 'Something went wrong',
 )
 
+// GitHub's unauthenticated limits differ per endpoint (search is ~10/min, the
+// core API is 60/hour), so we avoid quoting a specific number here — it would be
+// wrong on one of the two screens. We point at the fix (a token) and the reset
+// time from the response instead.
 const text = computed(() => {
   if (!isRateLimit.value) return props.error.message
+
+  const resets = resetText.value ? ` The limit resets ${resetText.value}.` : ''
   if (!settings.hasToken) {
-    return "You've hit GitHub's 60 requests/hour limit for unauthenticated use. Add a personal access token to raise it to 5,000/hour."
+    return `You've hit GitHub's rate limit for unauthenticated requests. Add a personal access token for a much higher limit.${resets}`
   }
-  return resetText.value
-    ? `Your requests are used up for now — the limit resets ${resetText.value}.`
-    : 'Your requests are used up for now. Please try again shortly.'
+  return `Your requests are used up for now.${resets || ' Please try again shortly.'}`
 })
 </script>
 

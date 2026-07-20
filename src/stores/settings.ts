@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { RateLimitInfo } from '@/api/errors'
 
 const TOKEN_KEY = 'gh-explorer:token'
 
@@ -31,15 +30,8 @@ function persistToken(value: string): void {
 
 export const useSettingsStore = defineStore('settings', () => {
   const token = ref<string>(readStoredToken())
-  /** Latest rate-limit snapshot seen on any API response. */
-  const rateLimit = ref<RateLimitInfo | null>(null)
 
   const hasToken = computed(() => token.value.trim().length > 0)
-
-  /** True once we've exhausted the window and know when it resets. */
-  const isRateLimited = computed(
-    () => rateLimit.value !== null && rateLimit.value.remaining === 0,
-  )
 
   function setToken(value: string): void {
     token.value = value.trim()
@@ -51,18 +43,10 @@ export const useSettingsStore = defineStore('settings', () => {
     persistToken('')
   }
 
-  /** Called by the API layer after every request; null snapshots are ignored. */
-  function setRateLimit(info: RateLimitInfo | null): void {
-    if (info) rateLimit.value = info
-  }
-
   return {
     token,
-    rateLimit,
     hasToken,
-    isRateLimited,
     setToken,
     clearToken,
-    setRateLimit,
   }
 })
