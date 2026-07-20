@@ -154,8 +154,13 @@ as they land.
   resolve. 43 tests total.
   - `feat: build repository search page`
 
-- [ ] **Stage 6 — Detail page.** Route `/repo/:owner/:name`; stats, language,
-  license, topics, links.
+- [x] **Stage 6 — Detail page.** `RepoView` on `useRepoDetails`, reloading when
+  the route params change. Header (owner avatar, owner/name links, fork/archived
+  chips, description), external actions (View on GitHub, Homepage), a 4-tile
+  stats row (stars/forks/watchers/open issues), and a meta card (language dot,
+  license, default branch, created/updated/pushed relative dates, topics).
+  Dedicated loading (skeleton), 404 ("not found"), rate-limit, and generic-error
+  states. External links use `target="_blank" rel="noopener noreferrer"`.
   - `feat: build repository detail page`
 
 - [ ] **Stage 7 — Auth UX.** Token dialog, browser-only storage, rate-limit
