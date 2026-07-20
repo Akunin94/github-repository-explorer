@@ -32,6 +32,13 @@ const queryModel = computed<string>({
 
 const idle = computed(() => query.value.trim() === '')
 const capped = computed(() => totalCount.value > MAX_SEARCH_RESULTS)
+
+// Pagination changes `page` without a route change, so the router's
+// scroll-to-top doesn't fire. Bring the user back to the top of the results
+// (and the pager) when they jump to another page.
+function scrollToTop(): void {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -115,6 +122,7 @@ const capped = computed(() => totalCount.value > MAX_SEARCH_RESULTS)
             :total-visible="5"
             density="comfortable"
             rounded="lg"
+            @update:model-value="scrollToTop"
           />
         </div>
       </template>

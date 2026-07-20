@@ -129,9 +129,17 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
     }
   }
 
-  // Typing: reset to page 1 and debounce the request.
-  watch(trimmedQuery, () => {
+  // Typing: reset to page 1 and debounce the request. Enter the loading state
+  // immediately so the "no results" message can't flash during the debounce
+  // window (before the request has even been sent).
+  watch(trimmedQuery, (q) => {
     resetPage()
+    if (q === '') {
+      void run() // empty query: clear synchronously, no spinner
+      return
+    }
+    loading.value = true
+    error.value = null
     scheduleRun()
   })
 

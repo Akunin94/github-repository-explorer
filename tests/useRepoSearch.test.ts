@@ -100,6 +100,20 @@ describe('useRepoSearch', () => {
     expect(s.loading.value).toBe(true)
   })
 
+  it('enters the loading state immediately, before the debounce fires', async () => {
+    deferredMock()
+    const s = mountSearch()
+
+    s.query.value = 'vue'
+    await nextTick()
+
+    // The request hasn't been sent yet, but we're already "loading" so the
+    // empty-results message can't flash during the debounce window.
+    expect(searchMock).not.toHaveBeenCalled()
+    expect(s.loading.value).toBe(true)
+    expect(s.isEmpty.value).toBe(false)
+  })
+
   it('aborts an in-flight request when superseded by pagination', async () => {
     const calls = deferredMock()
     const s = mountSearch()
