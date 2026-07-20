@@ -51,6 +51,10 @@ are handled, not in the number of features.
 - **Request cancellation.** Search uses debounce + `AbortController` so fast
   typing can't race stale responses onto the screen or waste the rate budget.
 - **Deploy: GitHub Pages via GitHub Actions.** `base` is set to the repo path.
+- **SVG icons, not the icon font.** Icons come from `@mdi/js` via Vuetify's
+  `mdi-svg` iconset, so only the handful of icons we use are bundled rather than
+  the full ~1.3 MB webfont. Icons are imported per component and bound with
+  `:icon="mdiFoo"`.
 
 ## Edge cases we must handle (the disqualifying bar)
 
@@ -112,8 +116,10 @@ as they land.
   - `build: tighten TypeScript config and add @/ path alias`
   - `chore: add Pinia, Vue Router (hash) and Vitest`
 
-- [ ] **Stage 2 — Vuetify.** Add Vuetify 3, theme, and the app shell (app bar +
-  `<router-view>`).
+- [x] **Stage 2 — Vuetify.** Added Vuetify 3 (auto-import via
+  `vite-plugin-vuetify`), a light GitHub-flavored theme, and the app shell (app
+  bar + `<router-view>`). Uses SVG icons (`@mdi/js` + `mdi-svg` iconset) so only
+  imported icons ship, instead of the full ~1.3 MB MDI webfont.
   - `feat: set up Vuetify and app shell`
 
 - [ ] **Stage 3 — API layer & types.** GitHub types, fetch wrapper, rate-limit

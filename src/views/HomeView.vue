@@ -4,16 +4,8 @@ defineOptions({ name: 'SearchView' })
 </script>
 
 <template>
-  <section class="home">
-    <h1>GitHub Repository Explorer</h1>
-    <p>Search UI coming in a later stage.</p>
+  <section>
+    <h1 class="text-h5 font-weight-bold mb-1">Search GitHub repositories</h1>
+    <p class="text-body-2 text-medium-emphasis">Search UI coming in a later stage.</p>
   </section>
 </template>
-
-<style scoped lang="scss">
-.home {
-  h1 {
-    margin-bottom: 0.25rem;
-  }
-}
-</style>
