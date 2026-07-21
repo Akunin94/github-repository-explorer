@@ -35,6 +35,11 @@ npm run build    # type-check and build
   so deep links and refreshes work on GitHub Pages. Pushing to `main` runs the
   tests and deploys via GitHub Actions.
 
+## AI assistance
+
+I used AI (Claude) while building this — for scaffolding, tests, and drafting
+this README — and reviewed everything it produced.
+
 ## Screenshots
 
 Search:
@@ -47,9 +52,8 @@ Repository detail:
 
 Token modal:
 
-![Repository detail](docs/modal.png)
+![Add-token modal with no token entered](docs/modal.png)
 
 Rate limit reached:
 
-![Repository detail](docs/rate-limit.png)
-
+![Rate limit reached with no token](docs/rate-limit.png)
