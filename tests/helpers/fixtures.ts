@@ -16,7 +16,8 @@ export function makeRepo(overrides: Partial<GitHubRepo> = {}): GitHubRepo {
     fork: false,
     language: 'TypeScript',
     stargazers_count: 1234,
-    watchers_count: 1234,
+    watchers_count: 1234, // GitHub alias of stars
+    subscribers_count: 42, // the real watcher count
     forks_count: 567,
     open_issues_count: 89,
     topics: ['vue', 'framework', 'frontend'],

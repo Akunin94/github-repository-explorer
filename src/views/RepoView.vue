@@ -50,7 +50,13 @@ const stats = computed(() => {
   return [
     { icon: mdiStar, label: 'Stars', value: formatNumber(r.stargazers_count) },
     { icon: mdiSourceFork, label: 'Forks', value: formatNumber(r.forks_count) },
-    { icon: mdiEyeOutline, label: 'Watchers', value: formatNumber(r.watchers_count) },
+    // `subscribers_count` is the real watcher count; `watchers_count` is just a
+    // stars alias (GitHub legacy). Fall back only if the field is ever absent.
+    {
+      icon: mdiEyeOutline,
+      label: 'Watchers',
+      value: formatNumber(r.subscribers_count ?? r.watchers_count),
+    },
     { icon: mdiAlertCircleOutline, label: 'Open issues', value: formatNumber(r.open_issues_count) },
   ]
 })

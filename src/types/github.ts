@@ -21,7 +21,13 @@ export interface GitHubRepo {
   fork: boolean
   language: string | null
   stargazers_count: number
+  /**
+   * Legacy GitHub quirk: `watchers_count` is an alias of `stargazers_count`, not
+   * the real watcher count. The actual number of watchers is `subscribers_count`,
+   * which the /repos/{owner}/{repo} endpoint returns but the search endpoint omits.
+   */
   watchers_count: number
+  subscribers_count?: number
   forks_count: number
   open_issues_count: number
   topics?: string[]
