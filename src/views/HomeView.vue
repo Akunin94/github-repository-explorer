@@ -131,7 +131,9 @@ function scrollToTop(): void {
 </template>
 
 <style scoped lang="scss">
-.sort-select {
-  min-width: 180px;
+@media (min-width: 600px) {
+  .sort-select {
+    flex: 0 0 210px;
+  }
 }
 </style>
