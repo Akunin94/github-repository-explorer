@@ -17,6 +17,7 @@ const {
   page,
   items,
   totalCount,
+  incompleteResults,
   totalPages,
   loading,
   error,
@@ -100,6 +101,13 @@ function scrollToTop(): void {
     >
       {{ formatNumber(totalCount) }} repositories found
       <span v-if="capped">— showing the first {{ formatNumber(MAX_SEARCH_RESULTS) }}</span>
+      <span
+        v-if="incompleteResults"
+        class="text-warning d-block d-sm-inline"
+        title="GitHub's search timed out, so some matches may be missing."
+      >
+        · results may be incomplete
+      </span>
     </div>
 
     <div class="mt-4" :aria-busy="loading">

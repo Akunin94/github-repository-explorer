@@ -27,6 +27,8 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
 
   const items = ref<GitHubRepo[]>([])
   const totalCount = ref(0)
+  /** GitHub sets this when a search timed out and the results are partial. */
+  const incompleteResults = ref(false)
   const loading = ref(false)
   const error = ref<ApiError | null>(null)
 
@@ -62,6 +64,7 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
   function clearResults(): void {
     items.value = []
     totalCount.value = 0
+    incompleteResults.value = false
   }
 
   async function run(): Promise<void> {
@@ -95,6 +98,7 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
       if (local !== controller) return // superseded while awaiting
       items.value = data.items
       totalCount.value = data.total_count
+      incompleteResults.value = data.incomplete_results
     } catch (err) {
       if (err instanceof AbortedError) return
       if (local !== controller) return
@@ -174,6 +178,7 @@ export function useRepoSearch(options: UseRepoSearchOptions = {}) {
     // outputs
     items,
     totalCount,
+    incompleteResults,
     loading,
     error,
     totalPages,

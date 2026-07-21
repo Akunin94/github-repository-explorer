@@ -185,4 +185,15 @@ describe('useRepoSearch', () => {
     // An error is a distinct state from "searched but empty".
     expect(s.isEmpty.value).toBe(false)
   })
+
+  it('exposes incomplete_results from the response', async () => {
+    const calls = deferredMock()
+    const s = mountSearch()
+    s.query.value = 'vue'
+    await nextTick()
+    await vi.advanceTimersByTimeAsync(DEBOUNCE)
+    calls[0]!.resolve(response({ total_count: 1, incomplete_results: true, items: [] }))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(s.incompleteResults.value).toBe(true)
+  })
 })
