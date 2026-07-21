@@ -11,8 +11,18 @@ import type { SortOption } from '@/types/github'
 
 defineOptions({ name: 'SearchView' })
 
-const { query, sort, page, items, totalCount, totalPages, loading, error, isEmpty, retry } =
-  useRepoSearch()
+const {
+  query,
+  sort,
+  page,
+  items,
+  totalCount,
+  totalPages,
+  loading,
+  error,
+  isEmpty,
+  retry,
+} = useRepoSearch()
 
 const sortOptions: { title: string; value: SortOption }[] = [
   { title: 'Best match', value: 'best-match' },
@@ -33,11 +43,21 @@ const queryModel = computed<string>({
 const idle = computed(() => query.value.trim() === '')
 const capped = computed(() => totalCount.value > MAX_SEARCH_RESULTS)
 
+// A single spoken status for assistive tech, mirrored into an aria-live region.
+const statusMessage = computed(() => {
+  if (idle.value) return ''
+  if (loading.value) return 'Searching repositories…'
+  if (error.value) return error.value.message
+  if (isEmpty.value) return `No repositories found for “${query.value.trim()}”.`
+  return `${formatNumber(totalCount.value)} repositories found.`
+})
+
 // Pagination changes `page` without a route change, so the router's
 // scroll-to-top doesn't fire. Bring the user back to the top of the results
-// (and the pager) when they jump to another page.
+// (and the pager) when they jump to another page — honoring reduced motion.
 function scrollToTop(): void {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
 }
 </script>
 
@@ -70,6 +90,9 @@ function scrollToTop(): void {
       />
     </div>
 
+    <!-- Screen-reader status: announces searching / counts / errors. -->
+    <p class="sr-only" role="status" aria-live="polite">{{ statusMessage }}</p>
+
     <!-- Result meta -->
     <div
       v-if="!idle && !loading && !error && items.length"
@@ -79,7 +102,7 @@ function scrollToTop(): void {
       <span v-if="capped">— showing the first {{ formatNumber(MAX_SEARCH_RESULTS) }}</span>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-4" :aria-busy="loading">
       <!-- Loading -->
       <template v-if="loading">
         <v-skeleton-loader
@@ -111,9 +134,12 @@ function scrollToTop(): void {
 
       <!-- Results -->
       <template v-else>
-        <div class="d-flex flex-column ga-3">
-          <RepoListItem v-for="repo in items" :key="repo.id" :repo="repo" />
-        </div>
+        <!-- role="list" keeps list semantics in Safari despite list-style: none. -->
+        <ul role="list" class="repo-list d-flex flex-column ga-3">
+          <li v-for="repo in items" :key="repo.id">
+            <RepoListItem :repo="repo" />
+          </li>
+        </ul>
 
         <div v-if="totalPages > 1" class="d-flex justify-center mt-6">
           <v-pagination
@@ -131,6 +157,16 @@ function scrollToTop(): void {
 </template>
 
 <style scoped lang="scss">
+.repo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// On desktop the row is horizontal (>= Vuetify's `sm` breakpoint): pin the sort
+// select to a fixed width so switching options can't resize it — and therefore
+// can't shift the search field either. Below that the row stacks and both fields
+// stretch to full width.
 @media (min-width: 600px) {
   .sort-select {
     flex: 0 0 210px;
