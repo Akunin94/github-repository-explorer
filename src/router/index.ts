@@ -25,5 +25,7 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  scrollBehavior: () => ({ top: 0 }),
+  // Restore the previous scroll position on back/forward (so returning from a
+  // repo detail lands where you left the results); otherwise start at the top.
+  scrollBehavior: (_to, _from, savedPosition) => savedPosition ?? { top: 0 },
 })

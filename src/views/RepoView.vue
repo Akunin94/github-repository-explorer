@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   mdiAlertCircleOutline,
   mdiArrowLeft,
@@ -20,6 +21,19 @@ import { formatNumber, formatRelativeDate, languageColor } from '@/utils/format'
 defineOptions({ name: 'RepoView' })
 
 const props = defineProps<{ owner: string; name: string }>()
+
+const router = useRouter()
+
+// Prefer a real history "back" so the kept-alive search page restores its query,
+// pagination and scroll. Fall back to a plain push when the detail page was
+// opened directly (deep link / refresh), where there's nothing to go back to.
+function goBack(): void {
+  if (router.options.history.state.back) {
+    router.back()
+  } else {
+    void router.push({ name: 'search' })
+  }
+}
 
 const { repo, loading, error, load } = useRepoDetails()
 
@@ -46,13 +60,16 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
 
 <template>
   <section>
-    <router-link
-      to="/"
-      class="d-inline-flex align-center ga-1 text-secondary text-body-2 text-decoration-none mb-4"
+    <a
+      class="back-link d-inline-flex align-center ga-1 text-secondary text-body-2 text-decoration-none mb-4"
+      role="button"
+      tabindex="0"
+      @click="goBack"
+      @keydown.enter="goBack"
     >
       <v-icon :icon="mdiArrowLeft" size="small" />
       Back to search
-    </router-link>
+    </a>
 
     <!-- Loading -->
     <template v-if="loading">
@@ -66,7 +83,7 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
       title="Repository not found"
       :text="`${props.owner}/${props.name} doesn't exist or is private.`"
     >
-      <v-btn color="secondary" variant="flat" to="/">Back to search</v-btn>
+      <v-btn color="secondary" variant="flat" @click="goBack">Back to search</v-btn>
     </StateMessage>
 
     <!-- Other errors (rate limit, network, …) -->
@@ -183,5 +200,9 @@ const isNotFound = computed(() => error.value?.kind === 'not-found')
 // Guard against long names/descriptions forcing horizontal scroll on mobile.
 .wrap-anywhere {
   overflow-wrap: anywhere;
+}
+
+.back-link {
+  cursor: pointer;
 }
 </style>

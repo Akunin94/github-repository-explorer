@@ -45,7 +45,13 @@ const ui = useUiStore()
 
     <v-main>
       <v-container class="page">
-        <router-view />
+        <!-- Keep the search view alive so returning from a repo detail restores
+             the query, pagination and scroll position without re-fetching. -->
+        <router-view v-slot="{ Component }">
+          <keep-alive include="SearchView">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </v-container>
     </v-main>
   </v-app>
