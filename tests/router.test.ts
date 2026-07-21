@@ -15,4 +15,13 @@ describe('router', () => {
     await router.isReady()
     expect(router.currentRoute.value.name).toBe('search')
   })
+
+  it('reflects the current view in the document title', async () => {
+    await router.push('/')
+    await router.isReady()
+    expect(document.title).toBe('GitHub Repository Explorer')
+
+    await router.push('/repo/facebook/react')
+    expect(document.title).toBe('facebook/react · Repo Explorer')
+  })
 })
