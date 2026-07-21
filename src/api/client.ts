@@ -97,6 +97,20 @@ export async function request<T>(
     })
   }
 
-  const data = (await response.json()) as T
-  return { data, rateLimit }
+  // The body can still be read mid-flight when a caller aborts (superseded
+  // search/detail requests) — surface that as an AbortedError like a pre-body
+  // abort, and treat any other parse failure as a handled error rather than an
+  // uncaught rejection that would break the UI.
+  try {
+    const data = (await response.json()) as T
+    return { data, rateLimit }
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new AbortedError()
+    }
+    throw new ApiError('unknown', 'Received a malformed response from GitHub.', {
+      status: response.status,
+      rateLimit,
+    })
+  }
 }

@@ -100,4 +100,28 @@ describe('request', () => {
     fetchMock.mockRejectedValue(new DOMException('aborted', 'AbortError'))
     await expect(request('/x')).rejects.toBeInstanceOf(AbortedError)
   })
+
+  it('translates an abort during body read into AbortedError', async () => {
+    // fetch resolves, but reading the body is interrupted by an abort.
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(RL_HEADERS),
+      json: () => Promise.reject(new DOMException('aborted', 'AbortError')),
+    })
+    await expect(request('/x')).rejects.toBeInstanceOf(AbortedError)
+  })
+
+  it('maps a malformed success body to an unknown ApiError', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(RL_HEADERS),
+      json: () => Promise.reject(new SyntaxError('Unexpected token')),
+    })
+    await expect(request('/x')).rejects.toMatchObject({
+      name: 'ApiError',
+      kind: 'unknown',
+    })
+  })
 })
