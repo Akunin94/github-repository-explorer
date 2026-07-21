@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Ref } from 'vue'
 import RepoView from '@/views/RepoView.vue'
+import ErrorState from '@/components/ErrorState.vue'
 import type { GitHubRepo } from '@/types/github'
-import type { ApiError } from '@/api/errors'
+import { ApiError } from '@/api/errors'
 import { mountWithApp } from './helpers/mount'
 import { makeRepo } from './helpers/fixtures'
 
@@ -49,5 +50,24 @@ describe('RepoView', () => {
     const watchers = tiles.find((c) => c.text().includes('Watchers'))
     expect(watchers?.text()).toContain('42')
     expect(watchers?.text()).not.toContain('9,999')
+  })
+
+  it('shows a skeleton while loading', () => {
+    mock.loading.value = true
+    const wrapper = mountWithApp(RepoView, { props: { owner: 'vuejs', name: 'vue' } })
+    expect(wrapper.find('.v-skeleton-loader').exists()).toBe(true)
+  })
+
+  it('shows a dedicated not-found state on 404', () => {
+    mock.error.value = new ApiError('not-found', 'not found', { status: 404 })
+    const wrapper = mountWithApp(RepoView, { props: { owner: 'ghost', name: 'nope' } })
+    expect(wrapper.text()).toContain('Repository not found')
+    expect(wrapper.text()).toContain('ghost/nope')
+  })
+
+  it('renders ErrorState for non-404 errors', () => {
+    mock.error.value = new ApiError('network', 'Network error')
+    const wrapper = mountWithApp(RepoView, { props: { owner: 'vuejs', name: 'vue' } })
+    expect(wrapper.findComponent(ErrorState).exists()).toBe(true)
   })
 })
