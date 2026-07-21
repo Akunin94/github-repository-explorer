@@ -29,3 +29,14 @@ export const router = createRouter({
   // repo detail lands where you left the results); otherwise start at the top.
   scrollBehavior: (_to, _from, savedPosition) => savedPosition ?? { top: 0 },
 })
+
+const BASE_TITLE = 'GitHub Repository Explorer'
+
+// Reflect the current view in the tab title so history and bookmarks are
+// meaningful (e.g. "facebook/react · Repo Explorer" instead of the generic name).
+router.afterEach((to) => {
+  document.title =
+    to.name === 'repo'
+      ? `${to.params.owner}/${to.params.name} · Repo Explorer`
+      : BASE_TITLE
+})
