@@ -1,4 +1,5 @@
 import { request, type ApiResult } from './client'
+import { withCache } from './cache'
 import type { GitHubRepo, SearchReposResponse, SortOption } from '@/types/github'
 
 /** GitHub's Search API caps results at 1000 (page * per_page must stay <= 1000). */
@@ -27,17 +28,25 @@ export function searchRepositories({
   signal,
 }: SearchParams): Promise<ApiResult<SearchReposResponse>> {
   const sortValue = sortParam(sort)
-  return request<SearchReposResponse>('/search/repositories', {
-    params: {
-      q: query,
-      sort: sortValue,
-      order: sortValue ? 'desc' : undefined,
-      per_page: PER_PAGE,
-      page,
-    },
-    token,
-    signal,
-  })
+  // The token isn't part of the key: it only changes the rate limit, not the
+  // (public) results, so cached data is valid with or without one.
+  const key = `search:${sortValue ?? 'best-match'}:${page}:${query}`
+  return withCache(
+    key,
+    (s) =>
+      request<SearchReposResponse>('/search/repositories', {
+        params: {
+          q: query,
+          sort: sortValue,
+          order: sortValue ? 'desc' : undefined,
+          per_page: PER_PAGE,
+          page,
+        },
+        token,
+        signal: s,
+      }),
+    { signal },
+  )
 }
 
 interface RepoParams {
@@ -53,8 +62,14 @@ export function getRepository({
   token,
   signal,
 }: RepoParams): Promise<ApiResult<GitHubRepo>> {
-  return request<GitHubRepo>(
-    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
-    { token, signal },
+  const key = `repo:${owner}/${repo}`
+  return withCache(
+    key,
+    (s) =>
+      request<GitHubRepo>(
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+        { token, signal: s },
+      ),
+    { signal },
   )
 }

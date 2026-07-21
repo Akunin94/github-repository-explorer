@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { searchRepositories, getRepository, PER_PAGE } from '@/api/github'
+import { clearCache } from '@/api/cache'
 
 const fetchMock = vi.fn()
 
@@ -15,6 +16,7 @@ function calledUrl(): URL {
 }
 
 beforeEach(() => {
+  clearCache() // isolate tests from the module-level response cache
   vi.stubGlobal('fetch', fetchMock)
   fetchMock.mockReset()
   fetchMock.mockResolvedValue(okResponse())
