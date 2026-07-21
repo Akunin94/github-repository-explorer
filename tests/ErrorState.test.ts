@@ -65,4 +65,20 @@ describe('ErrorState', () => {
     await findButton(wrapper, 'Try again')!.trigger('click')
     expect(wrapper.emitted('retry')).toHaveLength(1)
   })
+
+  it('auto-retries once a token is added while rate-limited', async () => {
+    const wrapper = mountWithApp(ErrorState, { props: { error: rateLimitError() } })
+    useSettingsStore().setToken('ghp_new')
+    await nextTick()
+    expect(wrapper.emitted('retry')).toHaveLength(1)
+  })
+
+  it('does not auto-retry on token add for a non-rate-limit error', async () => {
+    const wrapper = mountWithApp(ErrorState, {
+      props: { error: new ApiError('network', 'Network error') },
+    })
+    useSettingsStore().setToken('ghp_new')
+    await nextTick()
+    expect(wrapper.emitted('retry')).toBeUndefined()
+  })
 })

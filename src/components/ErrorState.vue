@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { mdiAlertCircleOutline, mdiKeyOutline, mdiRefresh } from '@mdi/js'
 import type { ApiError } from '@/api/errors'
 import { useSettingsStore } from '@/stores/settings'
@@ -14,6 +14,15 @@ const settings = useSettingsStore()
 const ui = useUiStore()
 
 const isRateLimit = computed(() => props.error.kind === 'rate-limit')
+
+// Adding a token is the fix for a rate limit, so retry automatically the moment
+// one is saved (from this screen's "Add token" or the header) — no second click.
+watch(
+  () => settings.hasToken,
+  (hasToken, hadToken) => {
+    if (hasToken && !hadToken && isRateLimit.value) emit('retry')
+  },
+)
 const canAddToken = computed(() => isRateLimit.value && !settings.hasToken)
 
 const resetText = computed(() => {
