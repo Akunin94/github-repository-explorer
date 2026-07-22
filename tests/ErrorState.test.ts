@@ -81,4 +81,25 @@ describe('ErrorState', () => {
     await nextTick()
     expect(wrapper.emitted('retry')).toBeUndefined()
   })
+
+  it('offers to update a rejected (expired) token', () => {
+    const wrapper = mountWithApp(ErrorState, {
+      props: {
+        error: new ApiError('unauthorized', 'The provided token is invalid or expired.', {
+          status: 401,
+        }),
+      },
+    })
+    expect(wrapper.text()).toContain('Token rejected')
+    expect(findButton(wrapper, 'Update token')).toBeDefined()
+  })
+
+  it('auto-retries when the token changes after a rejection', async () => {
+    const wrapper = mountWithApp(ErrorState, {
+      props: { error: new ApiError('unauthorized', 'invalid', { status: 401 }) },
+    })
+    useSettingsStore().setToken('ghp_new')
+    await nextTick()
+    expect(wrapper.emitted('retry')).toHaveLength(1)
+  })
 })
